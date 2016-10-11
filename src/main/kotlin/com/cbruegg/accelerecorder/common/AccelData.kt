@@ -1,5 +1,8 @@
 package com.cbruegg.accelerecorder.common
 
+import java.io.File
+import java.io.FileWriter
+
 data class AccelData(val x: Long,
                      val y: Long,
                      val z: Long,
@@ -38,6 +41,18 @@ data class AccelData(val x: Long,
                     Source.valueOf(data[5]),
                     data[6].toInt()
             )
+        }
+    }
+}
+
+private fun Sequence<AccelData>.toCsvRowStrings() =
+        sequenceOf(AccelData.csvHeader()) + map { it.toCsvRow() }
+
+fun Sequence<AccelData>.writeCsvTo(file: File) {
+    FileWriter(file).use {
+        for (row in toCsvRowStrings()) {
+            it.write(row)
+            it.write("\n")
         }
     }
 }
