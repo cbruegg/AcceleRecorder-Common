@@ -2,6 +2,9 @@ package com.cbruegg.accelerecorder.common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
 
 private val mapper = jacksonObjectMapper()
 
@@ -23,10 +26,10 @@ data class Reading(val values: Map<String, Double>,
         Accelerometer, Gyroscope
     }
 
-    fun serialize(): String = mapper.writeValueAsString(this)
-
-    companion object {
-        fun deserialize(str: String): Reading = mapper.readValue(str)
-    }
-
 }
+
+fun List<Reading>.writeAsJson(file: File) {
+    mapper.writeValue(BufferedWriter(FileWriter(file)), this)
+}
+
+fun readReadings(json: String): List<Reading> = mapper.readValue(json)
