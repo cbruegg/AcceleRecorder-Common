@@ -2,9 +2,9 @@ package com.cbruegg.accelerecorder.common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
+import java.io.*
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
 
 private val mapper = jacksonObjectMapper()
 
@@ -32,11 +32,15 @@ data class Reading(
 
 }
 
-fun List<Reading>.writeAsJson(file: File) {
-    mapper.writeValue(BufferedWriter(FileWriter(file)), this)
+fun List<Reading>.writeAsJsonGz(file: File) {
+    mapper.writeValue(
+            BufferedWriter(OutputStreamWriter(GZIPOutputStream(FileOutputStream(file)), Charsets.UTF_8)),
+            this
+    )
 }
 
-fun readReadings(json: String): List<Reading> = mapper.readValue(json)
+fun readReadings(jsonGzFile: File): List<Reading> =
+        mapper.readValue(BufferedReader(InputStreamReader(GZIPInputStream(FileInputStream(jsonGzFile)))))
 
 fun List<Reading>.validateValueKeys() {
     val keysBySensorSource = mutableMapOf<Pair<Reading.Sensor, Reading.Source>, Set<String>>()
