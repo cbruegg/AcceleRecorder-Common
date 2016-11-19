@@ -27,7 +27,7 @@ data class Reading(
     }
 
     enum class Sensor {
-        Accelerometer, Gyroscope
+        Accelerometer, Gyroscope, SkinResistance, SkinTemperature, Pedometer, Distance
     }
 
 }
